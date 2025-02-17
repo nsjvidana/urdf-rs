@@ -3,14 +3,14 @@ use serde::{Deserialize, Deserializer, Serialize};
 
 use std::ops::{Deref, DerefMut};
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Mass {
     #[serde(rename(serialize = "@value"))]
     #[serde(deserialize_with = "de_f64")]
     pub value: f64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Inertia {
     #[serde(rename(serialize = "@ixx"))]
     #[serde(deserialize_with = "de_f64")]
@@ -32,7 +32,7 @@ pub struct Inertia {
     pub izz: f64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Inertial {
     #[serde(default)]
     pub origin: Pose,
@@ -40,7 +40,7 @@ pub struct Inertial {
     pub inertia: Inertia,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, PartialEq)]
 #[serde(rename_all = "snake_case")]
 pub enum Geometry {
     Box {
@@ -131,19 +131,19 @@ impl Serialize for Geometry {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Color {
     #[serde(rename(serialize = "@rgba"))]
     pub rgba: Vec4,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Texture {
     #[serde(rename(serialize = "@filename"))]
     pub filename: String,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Material {
     #[serde(rename(serialize = "@name"))]
     pub name: String,
@@ -156,7 +156,7 @@ pub struct Material {
     pub texture: Option<Texture>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Visual {
     #[serde(rename(serialize = "@name"), skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -167,7 +167,7 @@ pub struct Visual {
     pub material: Option<Material>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Collision {
     #[serde(rename(serialize = "@name"), skip_serializing_if = "Option::is_none")]
     pub name: Option<String>,
@@ -178,7 +178,7 @@ pub struct Collision {
 
 /// Urdf Link element
 /// See <http://wiki.ros.org/urdf/XML/link> for more detail.
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Link {
     #[serde(rename(serialize = "@name"))]
     pub name: String,
@@ -300,7 +300,7 @@ impl Visitor<'_> for Vec4Visitor {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Axis {
     #[serde(rename(serialize = "@xyz"))]
     pub xyz: Vec3,
@@ -314,7 +314,7 @@ impl Default for Axis {
     }
 }
 
-#[derive(Debug, Default, Deserialize, Serialize, Clone)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Pose {
     #[serde(rename(serialize = "@xyz"), default)]
     pub xyz: Vec3,
@@ -322,7 +322,7 @@ pub struct Pose {
     pub rpy: Vec3,
 }
 
-#[derive(Debug, Default, Deserialize, Serialize, Clone)]
+#[derive(Debug, Default, Deserialize, Serialize, Clone, PartialEq)]
 pub struct LinkName {
     #[serde(rename(serialize = "@link"))]
     pub link: String,
@@ -341,7 +341,7 @@ pub enum JointType {
     Spherical,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct JointLimit {
     #[serde(rename(serialize = "@lower"), default)]
     #[serde(deserialize_with = "de_f64")]
@@ -357,7 +357,7 @@ pub struct JointLimit {
     pub velocity: f64,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Mimic {
     #[serde(rename(serialize = "@joint"))]
     pub joint: String,
@@ -379,7 +379,7 @@ pub struct Mimic {
     pub offset: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct SafetyController {
     #[serde(rename(serialize = "@soft_lower_limit"), default)]
     #[serde(deserialize_with = "de_f64")]
@@ -397,7 +397,7 @@ pub struct SafetyController {
 
 /// Urdf Joint element
 /// See <http://wiki.ros.org/urdf/XML/joint> for more detail.
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub struct Joint {
     #[serde(rename(serialize = "@name"))]
     pub name: String,
@@ -421,7 +421,7 @@ pub struct Joint {
     pub safety_controller: Option<SafetyController>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Calibration {
     // `default` is needed when using `deserialize_with`: https://github.com/serde-rs/serde/issues/723#issuecomment-368135287
     #[serde(
@@ -441,7 +441,7 @@ pub struct Calibration {
     pub falling: Option<f64>,
 }
 
-#[derive(Debug, Deserialize, Serialize, Default, Clone)]
+#[derive(Debug, Deserialize, Serialize, Default, Clone, PartialEq)]
 pub struct Dynamics {
     #[serde(rename(serialize = "@damping"), default)]
     #[serde(deserialize_with = "de_f64")]
@@ -471,7 +471,7 @@ pub struct Dynamics {
 /// creates semver-incompatible releases is updated. And it also allows
 /// improving our situation of depending on multiple XML-related crates without
 /// a change considered breaking.
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[serde(rename = "robot")]
 pub struct Robot {
     #[serde(rename(serialize = "@name"), default)]

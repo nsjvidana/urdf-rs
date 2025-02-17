@@ -386,4 +386,31 @@ mod tests {
         let robot = read_from_string(&s).unwrap();
         check_robot(&robot);
     }
+
+    #[test]
+    fn debug() {
+        // let s = include_str!("../../mesh-loader/tmp/hsr_description/robots/hsrb4s.obj.urdf");
+        // let s = include_str!("../../mesh-loader/tmp/hsr_description/robots/hsrb4s.urdf");
+        // let s = include_str!("../../mesh-loader/tmp/hsrb_description/robots/hsrb4s.urdf");
+        // let s = include_str!(
+        //     "../../mesh-loader/tmp/pepper_robot/pepper_description/urdf/pepper1.0_generated_urdf/pepper.urdf"
+        // );
+        // let s = include_str!("../../mesh-loader/tmp/rtmros_nextage/nextage_calibration/models/checkerboard_horizontal.urdf");
+        let s = include_str!("../../mesh-loader/tmp/rtmros_nextage/nextage_calibration/models/checkerboard_waist.urdf");
+        // let s = include_str!(
+        //     "../../mesh-loader/tmp/rtmros_nextage/nextage_description/urdf/NextageOpen.urdf"
+        // );
+        // let s = include_str!(
+        //     "../../mesh-loader/tmp/ubr1_preview/ubr1_description/robots/ubr1_robot.urdf"
+        // );
+        let robot = read_from_string(s).unwrap();
+
+        // Loopback test
+        let s = write_to_string(&robot).unwrap();
+
+        // std::fs::write("../openrr/openrr-client/sample.urdf", &s);
+        let robot2 = read_from_string(&s).unwrap();
+        assert_eq!(robot, robot2);
+        dbg!(robot);
+    }
 }
