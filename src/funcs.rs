@@ -9,6 +9,8 @@ fn sort_link_joint(string: &str) -> Result<String> {
     let mut links = Vec::new();
     let mut joints = Vec::new();
     let mut materials = Vec::new();
+    #[cfg(feature = "transmission")]
+    let mut transmissions = Vec::new();
     for c in &e.children {
         if let xml::Xml::ElementNode(xml_elm) = c {
             if xml_elm.name == "link" {
@@ -18,11 +20,17 @@ fn sort_link_joint(string: &str) -> Result<String> {
             } else if xml_elm.name == "material" {
                 materials.push(xml::Xml::ElementNode(xml_elm.clone()));
             }
+            else if cfg!(feature = "transmission") && xml_elm.name == "transmission" {
+                #[cfg(feature = "transmission")]
+                transmissions.push(xml::Xml::ElementNode(xml_elm.clone()));
+            }
         }
     }
     let mut new_elm = e;
     links.extend(joints);
     links.extend(materials);
+    #[cfg(feature = "transmission")]
+    links.extend(transmissions);
     new_elm.children = links;
     Ok(format!("{new_elm}"))
 }

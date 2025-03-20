@@ -297,6 +297,72 @@ pub struct Dynamics {
     pub friction: f64,
 }
 
+#[cfg(feature = "transmission")]
+pub mod transmission {
+    use serde::{Deserialize, Deserializer};
+
+    #[derive(Debug, Clone)]
+    pub enum HardwareInterface {
+        JointStateInterface,
+        PositionJointInterface,
+        EffortJointInterface,
+        VelocityJointInterface,
+        Other(String)
+    }
+
+    impl<'de> Deserialize<'de> for HardwareInterface {
+        fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: Deserializer<'de>,
+        {
+            let s = String::deserialize(deserializer)?;
+            match s.as_str() {
+                "hardware_interface/JointStateInterface" | "JointStateInterface" => {
+                    Ok(HardwareInterface::JointStateInterface)
+                },
+                "hardware_interface/PositionJointInterface" | "PositionJointInterface" => {
+                    Ok(HardwareInterface::PositionJointInterface)
+                },
+                "hardware_interface/EffortJointInterface" | "EffortJointInterface" => {
+                    Ok(HardwareInterface::EffortJointInterface)
+                },
+                "hardware_interface/VelocityJointInterface" | "VelocityJointInterface" => {
+                    Ok(HardwareInterface::VelocityJointInterface)
+                },
+                _ => { Ok(HardwareInterface::Other(s)) }
+            }
+        }
+    }
+
+    #[derive(Debug, Deserialize, Clone)]
+    pub struct TransmissionJoint {
+        pub name: String,
+        #[serde(rename = "hardwareInterface")]
+        pub hardware_interface: Vec<HardwareInterface>
+    }
+
+    #[derive(Debug, Deserialize, Clone)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Actuator {
+        pub name: String,
+        pub mechanical_reduction: Option<String>,
+        pub hardware_interface: Option<HardwareInterface>,
+    }
+
+    #[derive(Debug, Deserialize, Clone)]
+    pub struct Transmission {
+        pub name: String,
+        #[serde(rename = "robotNamespace")]
+        pub robot_namespace: Option<String>,
+        #[serde(rename = "type")]
+        pub transmission_type: String,
+        #[serde(rename = "joint")]
+        pub joints: Vec<TransmissionJoint>,
+        #[serde(rename = "actuator")]
+        pub actuators: Vec<Actuator>,
+    }
+}
+
 /// Top level struct to access urdf.
 #[derive(Debug, Deserialize, Clone)]
 pub struct Robot {
@@ -311,4 +377,8 @@ pub struct Robot {
 
     #[serde(rename = "material", default)]
     pub materials: Vec<Material>,
+
+    #[cfg(feature = "transmission")]
+    #[serde(rename = "transmission", default)]
+    pub transmissions: Vec<transmission::Transmission>,
 }

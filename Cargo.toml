@@ -9,6 +9,10 @@ keywords = ["robotics", "robot", "ros", "urdf"]
 categories = ["data-structures", "parsing"]
 repository = "https://github.com/openrr/urdf-rs"
 
+[features]
+default = []
+transmission = []
+
 # Note: serde is public dependency.
 [dependencies]
 once_cell = "1"
