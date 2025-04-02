@@ -451,6 +451,40 @@ pub struct Dynamics {
     pub friction: f64,
 }
 
+#[cfg(feature = "transmission")]
+
+pub mod transmission {
+    use serde::{Deserialize, Deserializer, Serialize};
+
+    #[derive(Debug, Deserialize, Serialize, Default, Clone)]
+    pub struct TransmissionJoint {
+        pub name: String,
+        #[serde(rename = "hardwareInterface")]
+        pub hardware_interface: Vec<String>
+    }
+
+    #[derive(Debug, Deserialize, Serialize, Default, Clone)]
+    #[serde(rename_all = "camelCase")]
+    pub struct Actuator {
+        pub name: String,
+        pub mechanical_reduction: Option<String>,
+        pub hardware_interface: Option<String>,
+    }
+
+    #[derive(Debug, Deserialize, Serialize, Default, Clone)]
+    pub struct Transmission {
+        pub name: String,
+        #[serde(rename = "robotNamespace")]
+        pub robot_namespace: Option<String>,
+        #[serde(rename = "type")]
+        pub transmission_type: String,
+        #[serde(rename = "joint")]
+        pub joints: Vec<TransmissionJoint>,
+        #[serde(rename = "actuator")]
+        pub actuators: Vec<Actuator>,
+    }
+}
+
 /// Top level struct to access urdf.
 ///
 /// # Compatibility Note
@@ -485,6 +519,10 @@ pub struct Robot {
 
     #[serde(rename = "material", default, skip_serializing_if = "Vec::is_empty")]
     pub materials: Vec<Material>,
+
+    #[cfg(feature = "transmission")]
+    #[serde(rename = "transmission", default, skip_serializing_if = "Vec::is_empty")]
+    pub transmissions: Vec<transmission::Transmission>,
 }
 
 fn de_f64<'de, D>(deserializer: D) -> Result<f64, D::Error>
